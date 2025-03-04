@@ -1,7 +1,11 @@
 # STA2453: Zooplankton Classification
-Zooplankton are a diverse class of microscopic marine organisms that drift with the tides and currents of the waters they inhabit. The goal of this project is to train a discriminative model to classify zooplankton by species using images and auxiliary information provided in a dataset from the Ontario Ministry of Natural Resources. This report details the exploratory data analysis conducted to better understand the characteristics of the dataset through preliminary exploration and visualization. The results will be used to inform future modelling-related decisions. 
-We follow the Tidyverse style guide (https://style.tidyverse.org/files.html).
+
+Author: Markus Kangur
+
+This is the repository for my zooplankton classification project from STA2453 at the University of Toronto. Zooplankton are a diverse class of microscopic marine organisms that can be useful indicators of ecosystem health. However, it is difficult and time consuming to classify images manually. The goal of this project is to develop a discriminative model to classify zooplankton according to their species using the image mosaics and auxiliary/geometric information in a dataset from the Ontario Ministry of Natural Resources. Analysis and modelling will be completed in R while adhering (hopefully) to the Tidyverse style guide (https://style.tidyverse.org/files.html). If successful, this model will facilitate more efficient and cost-effective aquatic ecosystem monitoring.
 
 <p align="center">
   <img src="https://github.com/MarkusKangur/STA2453/blob/main/Data/Example%20Mosaic.png" alt="Sublime's custom image" height = 400/>
+<br>
+  Example Zooplankton Mosaic
 </p>
