@@ -43,17 +43,12 @@ dir <- "SIMC_OverlapTiffsWithPP/"
 files <- list.files(dir)
 images <- data.frame()
 
-j = 0
-
 for (file in files[1:1500]) {
   img <- stack(paste(dir, file, sep = ""))
   img_mat <- as.matrix(raster(img, 1))
 
   info <- data[data$Image.File == file, ]
   info$image <- NA
-  
-  j = j + 1
-  print(j)
 
   for (i in seq(1, length(info$Class))) {
     single <- info[i, ]
