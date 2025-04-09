@@ -1,6 +1,6 @@
 # ------------------------------------------------------------------------------
 # Filename: 01_exploration.R
-# This script performs generatess some exploratory plots while also preparing
+# This script generates some exploratory plots while also preparing
 # the data for modeling.
 # ------------------------------------------------------------------------------
 
@@ -15,6 +15,8 @@ images <- readRDS("images.RDS")
 data <- readRDS("data.RDS")
 
 # Helper function for displaying an image stored as a matrix
+# Arguments: M (matrix)
+# Returns: Plot of the image stored in M
 plot_image <- function(M) {
   dimnames <- list(x = seq(1, nrow(M)), y = seq(1, ncol(M)))
   mat <- matrix(M, ncol = ncol(M), nrow = nrow(M), dimnames = dimnames)
@@ -27,8 +29,7 @@ plot_image <- function(M) {
   return(plt)
 }
 
-# ------------------------------------------------------------------------------
-# Work with the image data
+# Work with the image data------------------------------------------------------
 
 # Visualize within-class variation for each "important" class
 imp <- c(
@@ -48,8 +49,7 @@ for (class in imp) {
   print(cowplot::plot_grid(plotlist = plts, scale = 0.95))
 }
 
-# ------------------------------------------------------------------------------
-# Prepare the non-image data
+# Prepare the non-image data ---------------------------------------------------
 
 # Distribution of class labels
 table(data$Class)
@@ -67,28 +67,32 @@ data$important <- 0
 imp_labels <- c(2, 10, 0, 15, 4, 5, 11)
 data[data$label %in% imp_labels, ]$important <- 1
 
-# Remove columns that don't provide meaningful information
+# Retain chosen variables that provide meaningful information
+# Remove variables with lots of missing data
 summary(data)
-data <- subset(data, select = -c(
-  Class.Particle.ID, Calibration.Factor, Calibration.Image, Camera, Capture.X,
-  Capture.Y, Date, Elapsed.Time, Original.Reference.ID, Particles.Per.Chain,
-  Source.Image, Sphere.Complement, Sphere.Count, Sphere.Unknown, Sphere.Volume,
-  Time, Timestamp, Particle.ID, file, SAM, Year, Month, Day, Rep, repnum, Key,
-  SITE, WIND, FR
+data <- subset(data, select = c(
+  Area..ABD., Area..Filled., Aspect.Ratio, Circle.Fit, Circularity,
+  Circularity..Hu., Compactness, Convex.Perimeter, Convexity, Diameter..ABD.,
+  Diameter..ESD., Diameter..FD., Edge.Gradient, Elongation, Feret.Angle.Max,
+  Feret.Angle.Min, Fiber.Curl, Fiber.Straightness, Geodesic.Aspect.Ratio,
+  Geodesic.Length, Geodesic.Thickness, Image.Height, Image.Width, Intensity,
+  Length, Perimeter, Roughness, Sigma.Intensity, Sum.Intensity, Symmetry,
+  Transparency, Volume..ABD., Volume..ESD., Width, DOY, gdd2, WaterT, avgdepth, 
+  trawltime, XANGLE, PRECIP, XWAVEHT, CLOUD_PC, volbest, WhitefishDen, 
+  UnknwCoregonine, CiscoDen, Exposure, YPerchDen, BurbotDen, Class, important, 
+  label
 ))
 
-# ------------------------------------------------------------------------------
-# Create some visualizations
+# Create some visualizations----------------------------------------------------
 
 # Number of observations per class
 a <- as.data.frame(table(data$Class))
 ggplot(data = a, aes(x = Var1, y = Freq)) +
   geom_bar(stat = "identity") +
   geom_text(aes(label = Freq), vjust = 0) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1))
-
-# Where were observations taken?
-barplot(table(data$Loc))
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust = 1)) + 
+  xlab("") + 
+  ylab("Frequency")
 
 # Distribution of image sizes by class
 ggplot(data = data, aes(x = Image.Width, y = Image.Height, colour = Class)) +
@@ -116,18 +120,10 @@ ggplot(data = data, aes(x = Perimeter, y = Symmetry, colour = Class)) +
   ylab("Symmetry")
 
 # Principal Component Analysis
-num_data <- subset(data, select = c(
-  Area..ABD., Area..Filled., Aspect.Ratio, Circle.Fit, Circularity,
-  Circularity..Hu., Compactness, Convex.Perimeter, Convexity, Diameter..ABD.,
-  Diameter..ESD., Diameter..FD., Edge.Gradient, Elongation, Feret.Angle.Max,
-  Feret.Angle.Min, Fiber.Curl, Fiber.Straightness, Geodesic.Aspect.Ratio,
-  Geodesic.Length, Geodesic.Thickness, Image.Height, Image.Width, Intensity,
-  Length, Perimeter, Roughness, Sigma.Intensity, Sum.Intensity, Symmetry,
-  Transparency, Volume..ABD., Volume..ESD., Width
-))
+num_data <- na.omit(subset(data, select = -c(Class, important, label)))
 PCA <- prcomp(num_data, center = TRUE, scale = TRUE)
-autoplot(PCA, data = data, shape = 1, color = "Class", scale = 0)
-autoplot(PCA, data = data, shape = 1, color = "Class", scale = 0) +
+autoplot(PCA, data = na.omit(data), shape = 1, color = "Class", scale = 0)
+autoplot(PCA, data = na.omit(data), shape = 1, color = "Class", scale = 0) +
   xlim(c(0, 100)) +
   ylim(c(0, 100))
 summary(PCA)

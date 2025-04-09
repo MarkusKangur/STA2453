@@ -1,7 +1,6 @@
 # ------------------------------------------------------------------------------
 # Filename: 00_preparation.R
-# Prepares the zooplankton data for analysis. This script can be skipped if the
-# preprocessed .RDS are downloaded from the Data directory.
+# Prepares the zooplankton data for analysis. 
 # ------------------------------------------------------------------------------
 
 library(tidyverse)
@@ -11,7 +10,9 @@ library(raster)
 # Set this to where you downloaded the data
 setwd("/Users/markuskangur/Desktop/Plankton")
 
-# Processes a directory of csv files into a single dataframe
+# Helper function for storing a directory of csv files in a single dataframe
+# Arguments: dir (string)
+# Returns: Returns the data stored in directory dir in a dataframe
 read_csvs <- function(dir) {
   csvs <- list.files(dir)
   data <- data.frame()
@@ -37,8 +38,8 @@ merged <- merge(data, master, by = "Image.File")
 # Save processed data for analysis
 saveRDS(merged, file = "data.RDS")
 
-# ------------------------------------------------------------------------------
-# Create a test dataset of extracted images
+# Create a test dataset of extracted images ------------------------------------
+
 dir <- "SIMC_OverlapTiffsWithPP/"
 files <- list.files(dir)
 images <- data.frame()
